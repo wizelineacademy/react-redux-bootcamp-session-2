@@ -1,0 +1,17 @@
+{
+  "scss.validate": false,
+  "stylelint.validate": ["scss"],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true,
+    "source.fixAll.stylelint": true
+  },
+  "eslint.validate": [
+    "javascript",
+    "typescript",
+    "typescriptreact"
+  ],
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "editor.rulers": [
+    100
+  ],
+}
