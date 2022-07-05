@@ -1,52 +1,21 @@
-import { ChangeEvent, FunctionComponent, useState } from 'react';
+import { ChangeEvent, FunctionComponent } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { addNote, deleteNote, replaceNotes, updateNote } from '../../store/actions/note';
+import { AppState } from '../../store';
 import Menu from './Menu';
 import NoteList from './NoteList';
 import { AvailableNotesTypes, BaseNoteStorage } from './types';
 
-const defaultNotes: Array<BaseNoteStorage<AvailableNotesTypes>> = [
-  {
-    id: '0',
-    type: 'text',
-    text: 'my text note',
-  },
-  {
-    id: '1',
-    type: 'counter',
-    counters: [
-      { id: 0, name: 'Person A', count: 0 },
-      { id: 1, name: 'Person B', count: 0 },
-    ],
-  },
-  {
-    id: '2',
-    type: 'todo',
-    itemList: [
-      { id: 0, text: 'bacon', checked: false },
-      { id: 1, text: 'eggs', checked: false },
-      { id: 2, text: 'ham', checked: false },
-    ],
-  },
-  {
-    id: '3',
-    type: 'canvas',
-  },
-];
-
 const NotesContainer: FunctionComponent = () => {
-  const [notes, setNotes] = useState(defaultNotes);
+  const notes = useSelector((state: AppState) => state);
+  const dispatch = useDispatch();
 
   const handleDelete = (id: string) => {
-    setNotes(notes.filter((note) => note.id !== id));
+    dispatch(deleteNote(id));
   };
 
   const handleUpdate = (id: string, data: BaseNoteStorage<AvailableNotesTypes>) => {
-    const newNotes = notes.map((note) => {
-      if (note.id !== id) {
-        return note;
-      }
-      return { ...note, ...data };
-    });
-    setNotes(newNotes);
+    dispatch(updateNote(id, data));
   };
 
   const addNew = (type: AvailableNotesTypes) => {
@@ -54,7 +23,7 @@ const NotesContainer: FunctionComponent = () => {
       type,
       id: crypto.randomUUID(),
     };
-    setNotes([...notes, newNote]);
+    dispatch(addNote(type, newNote));
   };
 
   const exportNotes = () => {
@@ -71,14 +40,14 @@ const NotesContainer: FunctionComponent = () => {
     if (!event.target.files?.length) {
       return;
     }
-    setNotes([]);
+    dispatch(replaceNotes([]));
     const [notesFile] = event.target.files;
     const reader = new FileReader();
     reader.addEventListener('load', () => {
       const textResult = reader.result as string;
       try {
         const newNotes = JSON.parse(textResult);
-        setNotes(newNotes);
+        dispatch(replaceNotes(newNotes));
         // eslint-disable-next-line no-empty
       } catch {}
     });
