@@ -1,14 +1,15 @@
 import { ChangeEvent, FunctionComponent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addNote, replaceNotes } from '../../store/actions/note';
-import { AppState } from '../../store';
+import { addNote } from '../../store/actions/note';
+import { AppState, CustomDispatch } from '../../store';
 import Menu from './Menu';
 import NoteList from './NoteList';
 import { AvailableNotesTypes } from './types';
+import { importFromFile } from '../../store/actions/thunk';
 
 const NotesContainer: FunctionComponent = () => {
   const notes = useSelector((state: AppState) => state);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<CustomDispatch>();
 
   const addNew = (type: AvailableNotesTypes) => {
     const newNote = {
@@ -32,18 +33,8 @@ const NotesContainer: FunctionComponent = () => {
     if (!event.target.files?.length) {
       return;
     }
-    dispatch(replaceNotes([]));
     const [notesFile] = event.target.files;
-    const reader = new FileReader();
-    reader.addEventListener('load', () => {
-      const textResult = reader.result as string;
-      try {
-        const newNotes = JSON.parse(textResult);
-        dispatch(replaceNotes(newNotes));
-        // eslint-disable-next-line no-empty
-      } catch {}
-    });
-    reader.readAsText(notesFile, 'utf-8');
+    dispatch(importFromFile(notesFile));
   };
 
   return (

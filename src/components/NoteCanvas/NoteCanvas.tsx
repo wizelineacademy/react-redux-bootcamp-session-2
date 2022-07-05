@@ -1,9 +1,9 @@
-import { FunctionComponent, MouseEvent, useCallback, useEffect, useRef } from 'react';
-import debounce from 'lodash.debounce';
+import { FunctionComponent, MouseEvent, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
+import { CustomDispatch } from '../../store';
+import { saveCanvasContent } from '../../store/actions/thunk';
 import Note, { NoteProps } from '../Note';
 import styles from './NoteCanvas.scss';
-import { updateNote } from '../../store/actions/note';
 
 const CANVAS_WIDTH = 400;
 const CANVAS_HEIGHT = 200;
@@ -13,7 +13,7 @@ export type NoteCanvasProps = NoteProps & {
 };
 
 const NoteCanvas: FunctionComponent<NoteCanvasProps> = ({ content, ...baseNoteProps }) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<CustomDispatch>();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const canvasContextRef = useRef<CanvasRenderingContext2D>();
   const drawingMeta = useRef({ x: 0, y: 0, drawing: false });
@@ -73,15 +73,6 @@ const NoteCanvas: FunctionComponent<NoteCanvasProps> = ({ content, ...baseNotePr
     meta.y = offsetY;
   };
 
-  const saveCanvas = useCallback(() => {
-    const canvasContext = canvasRef.current as HTMLCanvasElement;
-    const newContent = canvasContext.toDataURL('image/png');
-    dispatch(updateNote(baseNoteProps.id, { content: newContent }));
-  }, [baseNoteProps.id, dispatch]);
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debouncedSaveCanvas = useCallback(debounce(saveCanvas, 2500), [saveCanvas]);
-
   const handleMouseUp = (event: MouseEvent<HTMLCanvasElement>) => {
     const meta = drawingMeta.current;
     if (!meta.drawing) {
@@ -94,7 +85,7 @@ const NoteCanvas: FunctionComponent<NoteCanvasProps> = ({ content, ...baseNotePr
     meta.x = 0;
     meta.y = 0;
     meta.drawing = false;
-    debouncedSaveCanvas();
+    dispatch(saveCanvasContent(baseNoteProps.id, canvasRef.current as HTMLCanvasElement));
   };
 
   return (
