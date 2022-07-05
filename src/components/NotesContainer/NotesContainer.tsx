@@ -5,7 +5,7 @@ import { AppState, CustomDispatch } from '../../store';
 import Menu from './Menu';
 import NoteList from './NoteList';
 import { AvailableNotesTypes } from './types';
-import { importFromFile } from '../../store/actions/saga';
+import { importFromFile } from '../../store/actions/epic';
 
 const NotesContainer: FunctionComponent = () => {
   const notes = useSelector((state: AppState) => state);
