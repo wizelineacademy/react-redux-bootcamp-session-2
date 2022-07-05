@@ -1,0 +1,25 @@
+.button.button {
+  background-color: #ddd;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  display: none;
+  font-size: 14px;
+  margin: 0;
+  padding: 2px 4px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 1;
+
+  &:hover {
+    background-color: #ccc;
+  }
+}
+
+.container {
+  position: relative;
+
+  &:hover > .button {
+    display: block;
+  }
+}
