@@ -1,7 +1,7 @@
 import { FunctionComponent, MouseEvent, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { CustomDispatch } from '../../store';
-import { saveCanvasContent } from '../../store/actions/thunk';
+import { saveCanvasContent } from '../../store/actions/saga';
 import Note, { NoteProps } from '../Note';
 import styles from './NoteCanvas.scss';
 
