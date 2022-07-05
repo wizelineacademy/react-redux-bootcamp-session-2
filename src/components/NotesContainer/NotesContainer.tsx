@@ -1,22 +1,14 @@
 import { ChangeEvent, FunctionComponent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addNote, deleteNote, replaceNotes, updateNote } from '../../store/actions/note';
+import { addNote, replaceNotes } from '../../store/actions/note';
 import { AppState } from '../../store';
 import Menu from './Menu';
 import NoteList from './NoteList';
-import { AvailableNotesTypes, BaseNoteStorage } from './types';
+import { AvailableNotesTypes } from './types';
 
 const NotesContainer: FunctionComponent = () => {
   const notes = useSelector((state: AppState) => state);
   const dispatch = useDispatch();
-
-  const handleDelete = (id: string) => {
-    dispatch(deleteNote(id));
-  };
-
-  const handleUpdate = (id: string, data: BaseNoteStorage<AvailableNotesTypes>) => {
-    dispatch(updateNote(id, data));
-  };
 
   const addNew = (type: AvailableNotesTypes) => {
     const newNote = {
@@ -57,7 +49,7 @@ const NotesContainer: FunctionComponent = () => {
   return (
     <div>
       <Menu addNew={addNew} importNotes={importNotes} exportNotes={exportNotes} />
-      <NoteList handleDelete={handleDelete} handleUpdate={handleUpdate} notes={notes} />
+      <NoteList notes={notes} />
     </div>
   );
 };

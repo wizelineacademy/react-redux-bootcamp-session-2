@@ -1,5 +1,7 @@
 import clsx from 'clsx';
 import { FunctionComponent, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { updateNote } from '../../store/actions/note';
 import Deletable from '../Deletable';
 import Note, { NoteProps } from '../Note';
 import Checkbox from './Checkbox';
@@ -14,14 +16,10 @@ type Item = {
 
 export type NoteToDoProps = NoteProps & {
   itemList: Item[];
-  onChange?: (data: Record<string, unknown>) => void;
 };
 
-const NoteToDo: FunctionComponent<NoteToDoProps> = ({
-  itemList = [],
-  onChange,
-  ...baseNoteProps
-}) => {
+const NoteToDo: FunctionComponent<NoteToDoProps> = ({ itemList = [], ...baseNoteProps }) => {
+  const dispatch = useDispatch();
   const [localItemList, setLocalItemList] = useState(itemList);
   const onItemAdd = (item: string) => {
     const newItem: Item = {
@@ -31,13 +29,13 @@ const NoteToDo: FunctionComponent<NoteToDoProps> = ({
     };
     const newItemList = [...localItemList, newItem];
     setLocalItemList(newItemList);
-    onChange?.({ itemList: newItemList });
+    dispatch(updateNote(baseNoteProps.id, { itemList: newItemList }));
   };
 
   const onItemDelete = (itemId: number) => {
     const newItemList = localItemList.filter((item) => item.id !== itemId);
     setLocalItemList(newItemList);
-    onChange?.({ itemList: newItemList });
+    dispatch(updateNote(baseNoteProps.id, { itemList: newItemList }));
   };
 
   const onItemToggle = (itemId: number, checked: boolean) => {
@@ -45,7 +43,7 @@ const NoteToDo: FunctionComponent<NoteToDoProps> = ({
       item.id === itemId ? { ...item, checked } : item
     );
     setLocalItemList(newItems);
-    onChange?.({ itemList: newItems });
+    dispatch(updateNote(baseNoteProps.id, { itemList: newItems }));
   };
 
   return (

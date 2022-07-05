@@ -1,21 +1,19 @@
 import { FunctionComponent, MouseEvent, useCallback, useEffect, useRef } from 'react';
 import debounce from 'lodash.debounce';
+import { useDispatch } from 'react-redux';
 import Note, { NoteProps } from '../Note';
 import styles from './NoteCanvas.scss';
+import { updateNote } from '../../store/actions/note';
 
 const CANVAS_WIDTH = 400;
 const CANVAS_HEIGHT = 200;
 
 export type NoteCanvasProps = NoteProps & {
   content?: string;
-  onChange?: (data: Record<string, unknown>) => void;
 };
 
-const NoteCanvas: FunctionComponent<NoteCanvasProps> = ({
-  content,
-  onChange,
-  ...baseNoteProps
-}) => {
+const NoteCanvas: FunctionComponent<NoteCanvasProps> = ({ content, ...baseNoteProps }) => {
+  const dispatch = useDispatch();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const canvasContextRef = useRef<CanvasRenderingContext2D>();
   const drawingMeta = useRef({ x: 0, y: 0, drawing: false });
@@ -78,8 +76,8 @@ const NoteCanvas: FunctionComponent<NoteCanvasProps> = ({
   const saveCanvas = useCallback(() => {
     const canvasContext = canvasRef.current as HTMLCanvasElement;
     const newContent = canvasContext.toDataURL('image/png');
-    onChange?.({ content: newContent });
-  }, [onChange]);
+    dispatch(updateNote(baseNoteProps.id, { content: newContent }));
+  }, [baseNoteProps.id, dispatch]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSaveCanvas = useCallback(debounce(saveCanvas, 2500), [saveCanvas]);

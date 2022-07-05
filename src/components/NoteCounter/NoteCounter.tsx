@@ -1,4 +1,6 @@
 import { FunctionComponent, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { updateNote } from '../../store/actions/note';
 import Deletable from '../Deletable';
 import Note, { NoteProps } from '../Note';
 import Counter from './Counter';
@@ -12,14 +14,10 @@ type CounterNote = {
 
 export type NoteCounterProps = NoteProps & {
   counters: CounterNote[];
-  onChange?: (data: Record<string, unknown>) => void;
 };
 
-const NoteCounter: FunctionComponent<NoteCounterProps> = ({
-  counters = [],
-  onChange,
-  ...baseNoteProps
-}) => {
+const NoteCounter: FunctionComponent<NoteCounterProps> = ({ counters = [], ...baseNoteProps }) => {
+  const dispatch = useDispatch();
   const [localCounters, setLocalCounters] = useState(counters);
   const onCounterAdd = ({ name, count }: NewCounterData) => {
     const newCounter: CounterNote = {
@@ -29,13 +27,13 @@ const NoteCounter: FunctionComponent<NoteCounterProps> = ({
     };
     const newCounters = [...localCounters, newCounter];
     setLocalCounters(newCounters);
-    onChange?.({ counters: newCounters });
+    dispatch(updateNote(baseNoteProps.id, { counters: newCounters }));
   };
 
   const onCounterRemove = (id: number) => {
     const newCounters = localCounters.filter((counter) => counter.id !== id);
     setLocalCounters(newCounters);
-    onChange?.({ counters: newCounters });
+    dispatch(updateNote(baseNoteProps.id, { counters: newCounters }));
   };
 
   const onCounterUpdate = (id: number, count: number) => {
@@ -49,7 +47,7 @@ const NoteCounter: FunctionComponent<NoteCounterProps> = ({
       };
     });
     setLocalCounters(newCounters);
-    onChange?.({ counters: newCounters });
+    dispatch(updateNote(baseNoteProps.id, { counters: newCounters }));
   };
 
   return (

@@ -8,8 +8,6 @@ import styles from './NoteList.scss';
 
 type NoteListProps = {
   notes: BaseNoteStorage<AvailableNotesTypes>[];
-  handleDelete: (id: string) => void;
-  handleUpdate: (id: string, data: BaseNoteStorage<AvailableNotesTypes>) => void;
 };
 
 const availableNotes = {
@@ -25,7 +23,7 @@ const isNoteOfValidType = <T extends AvailableNotesTypes>(
   return availableNotes[note.type] !== undefined;
 };
 
-const NoteList: FunctionComponent<NoteListProps> = ({ notes, handleDelete, handleUpdate }) => {
+const NoteList: FunctionComponent<NoteListProps> = ({ notes }) => {
   return (
     <div className={styles.list}>
       {notes.map((note) => {
@@ -38,8 +36,6 @@ const NoteList: FunctionComponent<NoteListProps> = ({ notes, handleDelete, handl
             key={note.id}
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             {...(note as any)}
-            onDelete={() => handleDelete(note.id)}
-            onChange={(data: never) => handleUpdate(note.id, data)}
           />
         );
       })}
